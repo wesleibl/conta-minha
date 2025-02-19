@@ -3,6 +3,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import useStorage from "@/src/hooks/useStorage"
 import DateTimePicker from "@react-native-community/datetimepicker";
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 export function AdicionarConta() {
     const [step, setStep] = useState(1);
@@ -65,6 +67,7 @@ export function AdicionarConta() {
 
     const fetchBill = async () => {
         const bill = {
+            id: uuidv4(),
             optionBill: opPayReceive,
             billName: billName,
             amount: amount,
@@ -73,7 +76,6 @@ export function AdicionarConta() {
             installmentsType: installmentsType,
         };
 
-        
         await saveBill('@bill', bill)
         alert("Conta salva com sucesso!")
         cleanInput();
