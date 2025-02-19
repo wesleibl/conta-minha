@@ -1,205 +1,219 @@
-import {View, Text, TextInput, Switch, StyleSheet, TouchableOpacity, TouchableWithoutFeedback}  from "react-native";
+import { View, Text, TextInput, Switch, StyleSheet, TouchableOpacity } from "react-native";
 import { RadioButton } from "react-native-paper";
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 export function AdicionarConta() {
-    const [opPayReceive, setOpPayReceive] =  React.useState('pay');
-    const [billName, setBillName] = React.useState('');
-    const [installments, setInstallments] = React.useState(0);
+    const [step, setStep] = useState(1);
+    const [opPayReceive, setOpPayReceive] = useState("pay");
+    const [billName, setBillName] = useState("");
+    const [installments, setInstallments] = useState(0);
     const [isInstallmentsEnabled, setIsInstallmentsEnabled] = useState(false);
-    const [installmentsType, setInstallmentsType] = useState('installments');
+    const [installmentsType, setInstallmentsType] = useState("installments");
+    const [amount, setAmount] = useState("");
 
     const toggleSwitch = () => {
-        setIsInstallmentsEnabled(previousState => !previousState)
+        setIsInstallmentsEnabled(!isInstallmentsEnabled);
         setInstallments(0);
-        setInstallmentsType('installments');
+        setInstallmentsType("installments");
+    };
+
+    const handleAmmount = (ammount) => {
+        console.log(ammount)
+        let formattedAmmount = ammount.replace(/[^0-9,]/g, "");
+        
+        if (formattedAmmount.indexOf(',') !== -1) {
+            formattedAmmount = formattedAmmount.replace(/,(?=.*,)/g, "");
+        }
+
+        formattedAmmount = formattedAmmount.replace(/(\,\d{2})\d+/g, "$1");
+
+        setAmount(formattedAmmount);
     }
+
+    console.log(step)
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Adicionar Conta</Text>
+            <Text style={styles.title}>Siga os passos para adicionar sua conta 🚀</Text>
             <View style={styles.content}>
-                <View style={styles.opPayReceive}>
-                    <TouchableOpacity 
-                        style={[
-                            styles.button,
-                            opPayReceive === "pay" && styles.activeButton
-                        ]} 
-                        onPress={() => setOpPayReceive("pay")}
-                    >
-                        <Text style={styles.buttonText}>Pagar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={[
-                            styles.button,
-                            opPayReceive === "receive" && styles.activeButton
-                        ]} 
-                        onPress={() => setOpPayReceive("receive")}
-                    >
-                        <Text style={styles.buttonText}>Receber</Text>
-                    </TouchableOpacity>
-                </View> 
-                <View>
-                    {opPayReceive === "pay" 
-                        ? (<Text>Quem você precisa pagar?</Text>) 
-                        : (<Text>Quem vai te pagar?</Text>)
-                    }
-                    <TextInput
-                        style={styles.billName}
-                        onChangeText={text => setBillName(text)}
-                        value={billName}
-                        placeholder="Nome da pessoa/empresa"
-                    />
-                </View>
-                <View style={styles.opInstallment}>
-                    <Text style={styles.opInstallmentsTitle}>
-                        Tem Parcelas?
-                    </Text>
-                    <Switch
-                        trackColor={{false: '#767577', true: '#81b0ff'}}
-                        thumbColor={isInstallmentsEnabled ? '#006E90' : '#f4f3f4'}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isInstallmentsEnabled}
-                    />
-                </View>
-                {isInstallmentsEnabled && (
+                {step === 1 && (
                     <View>
-                        <View style={styles.radioGroup}>
-                            <View style={styles.radioOp}>
-                                <RadioButton
-                                    color="#006E90"
-                                    value="installments"
-                                    status={installmentsType === 'installments' ? 'checked' : 'unchecked'}
-                                    onPress={() => setInstallmentsType('installments')}
-                                />
-                                <Text>Parcelado</Text>
-                            </View>
-                            <View style={styles.radioOp}>
-                                <RadioButton
-                                    color="#006E90"
-                                    value="recurring"
-                                    status={installmentsType === 'recurring' ? 'checked' : 'unchecked'}
-                                    onPress={() => setInstallmentsType('recurring')}
-                                />
-                                <Text>Contínuo</Text>
-                            </View>
+                        <Text style={styles.titleStep}>Escolha o tipo de transação:</Text>
+                        <View style={styles.opPayReceiveWrapper}>
+                            <TouchableOpacity 
+                                onPress={() => {setOpPayReceive("pay"); setStep(step + 1)}}
+                                style={styles.opPayReceiveButton}
+                            >
+                                <Text style={styles.opText}>Pagar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                style={styles.opPayReceiveButton}
+                                onPress={() => {setOpPayReceive("receive"); setStep(step + 1)}}
+                            >
+                                <Text style={styles.opText}>Receber</Text>
+                            </TouchableOpacity>
                         </View>
-                        {installmentsType === 'installments' && (
-                            <View style={styles.installments}>
-                                <Text>Em quantas vezes?</Text>
-                                <TextInput
-                                    style={styles.installmentsButton}
-                                    onChangeText={text => setInstallments(text.replace(/[^0-9]/g, ''))}
-                                    value={installments}
-                                    placeholder="0"
-                                    keyboardType="numeric"
-                                />
-                            </View>
+                    </View>
+                )}
+                {step === 2 && (
+                    <View>
+                        <Text style={styles.titleStep}>{opPayReceive === "pay" ? "Quem você precisa pagar?" : "Quem vai te pagar?"}</Text>
+                        <TextInput
+                            style={styles.inputName}
+                            onChangeText={setBillName}
+                            value={billName}
+                            placeholder="Nome da pessoa/empresa"
+                        />
+                    </View>
+                )}
+                {step === 3 && (
+                    <View>
+                        <Text style={styles.titleStep}>Qual valor R$?</Text>
+                        <TextInput
+                            style={styles.inputAmmount}
+                            onChangeText={text => handleAmmount(text)}
+                            value={amount}
+                            placeholder="Digite o valor"
+                            keyboardType="numeric"
+                        />
+                    </View>
+                )}
+                {step === 4 && (
+                    <View>
+                        <Text style={styles.titleStep}>Tem parcelas?</Text>
+                        <View style={styles.opInstallmentsWrapper}>
+                            <TouchableOpacity 
+                            onPress={() => {setIsInstallmentsEnabled(false); setStep(step + 1)}}
+                            style={styles.opInstallments}
+                            >
+                                <Text style={styles.opText}>Não</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                            onPress={() => {setIsInstallmentsEnabled(true); setStep(step + 1)}}
+                            style={styles.opInstallments}
+                            >
+                                <Text style={styles.opText}>Sim</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
+                {(step > 1) && (
+                    <View style={styles.stepWrapper}>
+                        <TouchableOpacity style={styles.stepButton} onPress={() => setStep(step - 1)}>
+                            <Text style={styles.opText}>Voltar</Text>
+                        </TouchableOpacity>
+                        {(step === 2 || step === 3) && (
+                        <TouchableOpacity style={[styles.stepButton, styles.nextStepButton]} onPress={() => setStep(step + 1)}>
+                            <Text style={styles.opText}>Próximo</Text>
+                        </TouchableOpacity>
                         )}
                     </View>
                 )}
-                <View>
-                    <Text>Qual valor R$?</Text>
-                    <TextInput
-                        style={styles.billName}
-                        onChangeText={text => setBillName(text)}
-                        value={billName}
-                        placeholder="Nome da pessoa/empresa"
-                    />
-                </View>
-                <View>
-                    <TouchableOpacity 
-                        onPress={() => {}}
-                    >
-                        <Text>Adicionar</Text>
-                    </TouchableOpacity>
-                </View>
+                {step === 5 && (
+                    <View style={styles.stepWrapper}>
+                        <TouchableOpacity style={[styles.stepButton, styles.nextStepButton]} onPress={() => setStep(step + 1)}>
+                            <Text style={styles.opText}>Salvar</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        paddingTop: 20,
-        backgroundColor: "#D4E9F3",
-        width: "100%"
+        justifyContent: "center",
+        backgroundColor: "#0E0D0D",
+        width: "100%",
     },
     title: {
         fontSize: 24,
         fontWeight: "bold",
-        color: "#124734"
+        color: "#F6F6F6",
+        fontFamily: 'Poppins-Regular',
+        marginBottom: 60,
+        paddingHorizontal: 30
     },
     content: {
-        width: 350,
-        flex: 1,
         alignItems: "center",
-        padding: 40,
+        gap: 20,
+    },
+    titleStep: {
+        color: "white",
+        fontFamily: 'Poppins-Regular',
+        fontSize: 16,
         marginVertical: 20,
-        backgroundColor: "#A0C4D6",
+    },
+    opPayReceiveWrapper: {
+        flexDirection: "row",
+        gap: 20,
+        justifyContent: "center",
+        alignItems: "center"
+    }
+    ,
+    opPayReceiveButton: {
+        backgroundColor: "#FFCB47",
+        paddingVertical: 20,
+        paddingHorizontal: 40,
         borderRadius: 20,
-        gap: 20
+        width: 150
     },
-    opPayReceive : {
+    opText: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 16,
+        textAlign: "center",
+    },
+    stepWrapper: {
         flexDirection: "row",
-        gap: 40,
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        width: 300
     },
-    button: {
-        backgroundColor: "#415A77",
-        paddingHorizontal: 20,
+    stepButton: {
+        backgroundColor: "#E94F37",
         paddingVertical: 10,
-        borderRadius: 8
+        borderRadius: 20,
+        width: 100,
+        marginTop: 30,
     },
-    buttonText: {
-        fontSize: 15,
-        fontWeight: "bold",
-        color: "white"
+    nextStepButton: {
+      backgroundColor: "#0DE794"  
     },
-    activeButton: {
-        backgroundColor: "#006E90"
-    },
-    billName: {
-        height: 50,
-        width: 200,
-        borderRadius: 8,
-        backgroundColor: "#006E90",
+    inputName: {
+        backgroundColor: "#FFCB47",
+        paddingVertical: 20,
+        paddingHorizontal: 40,
+        borderRadius: 20,
+        width: 300,
         textAlign: "center",
-        alignSelf: "center"
+        alignSelf: "center",
+        fontSize: 16,
+        fontFamily: 'Poppins-Regular'
     },
-    opInstallment: {
+    inputAmmount: {
+        backgroundColor: "#FFCB47",
+        paddingVertical: 20,
+        paddingHorizontal: 40,
+        borderRadius: 20,
+        width: 300,
+        textAlign: "center",
+        alignSelf: "center",
+        fontSize: 16,
+        fontFamily: 'Poppins-Regular'
+    },
+    opInstallmentsWrapper: {
         flexDirection: "row",
-        alignItems: "center",
-        height: 30
-    },
-    opInstallmentsTitle: {
-        textAlign: "center",
-        fontSize: 15,
-        fontWeight: "bold"
-    },
-    installments: {
+        gap: 20,
+        justifyContent: "center",
         alignItems: "center"
     },
-    installmentsButton: {
-        height: 50,
-        width: 50,
-        borderRadius: 8,
-        backgroundColor: "#006E90",
-        textAlign: "center"
+    opInstallments: {
+        backgroundColor: "#FFCB47",
+        paddingVertical: 20,
+        paddingHorizontal: 40,
+        borderRadius: 20,
+        width: 150
     },
-    radioGroup: {
-        width: 200,
-        gap: 5
-    },
-    radioOp: {
-        width: 200,
-        height: 20,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        gap: 10,
-    }
-})
+});
