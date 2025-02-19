@@ -8,16 +8,29 @@ const Tab = createBottomTabNavigator();
 
 export function Routes() {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+        screenOptions={{
+            tabBarStyle: {
+                backgroundColor: "#0E0D0D",
+                elevation: 10,
+                height: 50,
+                alignItems: 'center', 
+                justifyContent: 'center',
+                paddingTop: 2
+            }
+        }}
+    >
             <Tab.Screen
                 name="adicionarConta"
                 component={AdicionarConta}
                 options={{
                     tabBarShowLabel: false,
                     headerShown: false,
-                    tabBarIcon: ( {focused, size, color}) => {
+                    tabBarIcon: ( {focused}) => {
+                        let size = 30;
+                        let color = '#FFCB47';
                         if(focused) {
-                            return <Ionicons size={size} color={'#006E90'} name="add-circle" />
+                            return <Ionicons size={size} color={color} name="add-circle"/>
                         }
 
                         return <Ionicons size={size} color={color} name="add-circle-outline" />
@@ -31,9 +44,11 @@ export function Routes() {
                 options={{
                     tabBarShowLabel: false,
                     headerShown: false,
-                    tabBarIcon: ( {focused, size, color}) => {
+                    tabBarIcon: ( {focused}) => {
+                        let size = 30;
+                        let color = '#FFCB47';
                         if(focused) {
-                            return <Ionicons size={size} color={'#006E90'} name="list-circle" />
+                            return <Ionicons size={size} color={color} name="list-circle" />
                         }
 
                         return <Ionicons size={size} color={color} name="list-circle-outline" />
@@ -47,9 +62,12 @@ export function Routes() {
                 options={{
                     tabBarShowLabel: false,
                     headerShown: false,
-                    tabBarIcon: ( {focused, size, color}) => {
+                    tabBarIcon: ( {focused}) => {
+                        let size = 28;
+                        let color = '#FFCB47';
+
                         if(focused) {
-                            return <Ionicons size={size} color={'#006E90'} name="calendar-number" />
+                            return <Ionicons size={size} color={color} name="calendar-number" />
                         }
 
                         return <Ionicons size={size} color={color} name="calendar-number-outline" />
