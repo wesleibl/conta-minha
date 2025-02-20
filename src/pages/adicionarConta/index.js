@@ -38,17 +38,51 @@ export function AdicionarConta() {
         setExpireDate(new Date());
     };
 
-    const handleAmount = (amount) => {
-        let formattedAmount = amount.replace(/[^0-9,]/g, "");
-        
-        if (formattedAmount.indexOf(',') !== -1) {
-            formattedAmount = formattedAmount.replace(/,(?=.*,)/g, "");
+    const handleAmount = (text) => {
+        let formattedAmount = text.replace(/[^\d,.]/g, '');
+    
+        const separatorIndex = formattedAmount.search(/[,.]/);
+        const hasSeparator = separatorIndex !== -1;
+    
+        let integerPart = '';
+        let decimalPart = '';
+    
+        if (hasSeparator) {
+            integerPart = formattedAmount.slice(0, separatorIndex);
+            decimalPart = formattedAmount.slice(separatorIndex + 1);
+    
+            decimalPart = decimalPart.replace(/\D/g, '').substring(0, 2);
+    
+            if (integerPart === '' && decimalPart === '') {
+                integerPart = '0';
+            } else if (integerPart === '') {
+                integerPart = '0';
+            }
+    
+            formattedAmount = `${integerPart},${decimalPart}`;
         }
 
-        formattedAmount = formattedAmount.replace(/(\,\d{2})\d+/g, "$1");
-
         setAmount(formattedAmount);
-    }
+    };
+    
+    const fetchBill = async () => {
+        let formattedAmount = amount.replace(',', '.');
+        
+        const bill = {
+            id: uuidv4(),
+            optionBill: opPayReceive,
+            billName: billName,
+            amount: formattedAmount,
+            expireDate: expireDate,
+            installments: installments,
+            installmentsType: installmentsType,
+        };
+        
+        await saveBill('@bill', bill);
+        alert("Conta salva com sucesso!");
+        cleanInput();
+        step = 1;
+    };
 
     const onChangeDate = (event, selectedDate) => {
         if (selectedDate) {
@@ -64,23 +98,6 @@ export function AdicionarConta() {
             setStep(5)
         }
     }
-
-    const fetchBill = async () => {
-        const bill = {
-            id: uuidv4(),
-            optionBill: opPayReceive,
-            billName: billName,
-            amount: amount,
-            expireDate: expireDate,
-            installments: installments,
-            installmentsType: installmentsType,
-        };
-
-        await saveBill('@bill', bill)
-        alert("Conta salva com sucesso!")
-        cleanInput();
-        step = 1;
-    };
 
     return (
         <View style={styles.container}>
@@ -123,8 +140,8 @@ export function AdicionarConta() {
                             style={styles.inputAmount}
                             onChangeText={text => handleAmount(text)}
                             value={amount}
-                            placeholder="Digite o valor"
-                            keyboardType="numeric"
+                            placeholder="0,00"
+                            keyboardType="decimal-pad"
                         />
                     </View>
                 )}
