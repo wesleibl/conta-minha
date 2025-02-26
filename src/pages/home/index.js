@@ -1,45 +1,26 @@
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect } from 'react'
-import useStorage from '@/src/hooks/useStorage';
-import { BillsItem } from '../contas/components/billsItem';
+import { useBillsStore } from "../../store/billsStore";
+import { BillsList } from "../contas/components/billsList"
 
 export function Home() {
     const [listBills, setListBills] = useState([]);
     const focused = useIsFocused();
-    const { getBill, removeBill, getBillsThisMonth, clearAllBills, getRemainingAmount, payBill } = useStorage();
+    const store = useBillsStore();
 
     const getTotalAmount = (bills) => {
         return bills.reduce((acc, bill) => acc + parseFloat(bill.amount), 0);
     };
 
-    const toggleChecked = (id) => {
-        const updatedBills = listBills.map(bill => {
-            if (bill.id === id) {
-                const updatedBill = { 
-                    ...bill, 
-                    isChecked: !bill.isChecked 
-                };
-                payBill('@bill', updatedBill);
-                return updatedBill;
-            }
-            return bill;
-        });
-        setListBills(updatedBills);
-    };
-
     useEffect(() => {
-        async function loadBills() {
-            const bills = await getBillsThisMonth("@bill");
-            const billsWithChecked = bills.map(bill => ({
-                ...bill,
-                isChecked: bill.paymentRegister
-            }));
-            setListBills(billsWithChecked);
-        }
+        store.loadBills();
+        const bills = store.bills;
 
-        loadBills();
+        console.log(store.billsByMonth(bills));
+        setListBills(bills);
+
     }, [focused]);
 
     return (
@@ -55,13 +36,8 @@ export function Home() {
                 <Text style={styles.headerListText}>Valor R$</Text>
                 <Text style={styles.headerListText}>Pago</Text>
             </View>
-            <FlatList
-                style={styles.list}
-                data={listBills}
-                renderItem={({item}) => 
-                    <BillsItem data={item} toggleChecked={toggleChecked} />
-                }
-            />
+            <Text>Pagar</Text>
+            <BillsList list={listBills}/>
 '           <View style={styles.footer}>
                 <Text style={styles.footerText}>Total: </Text>
                 <Text style={styles.footerText}>

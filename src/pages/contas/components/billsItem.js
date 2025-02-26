@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, StyleSheet, Pressable} from "react-native";
 import Checkbox from 'expo-checkbox';
-import useStorage from '@/src/hooks/useStorage';
 
-export function BillsItem({ data, toggleChecked }) {
+export function BillsItem({ data }) {
+  const [billIsChecked, setBillIsChecked] = React.useState(false)
   const { billName, expireDate, installments, amount, isChecked } = data;
-  const formattedAmount = amount.toString().replace('.',',') + (amount.includes(',') ? '' : ',00');
+  const formattedAmount = amount.toString().replace('.', ',') + (amount.toString().includes(',') ? '' : ',00');
+
+  useEffect(() => {
+    setBillIsChecked(isChecked);
+  }, [isChecked]);
 
   return (
     <Pressable style={styles.container}>
@@ -15,11 +19,10 @@ export function BillsItem({ data, toggleChecked }) {
       <Text style={[styles.text, {width: 90}]}>{formattedAmount}</Text>
       <Checkbox 
         style={styles.checkbox} 
-        value={isChecked} 
-        onValueChange={() => toggleChecked(data.id)} 
+        value={billIsChecked}
+        onValueChange={() => setBillIsChecked((prev) => !prev)}
       />
     </Pressable>
-
   );
 }
 

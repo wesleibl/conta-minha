@@ -1,10 +1,9 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, Animated  } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import useStorage from "@/src/hooks/useStorage"
 import DateTimePicker from "@react-native-community/datetimepicker";
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
+import { useBillsStore } from "../../store/billsStore";
 
 export function AdicionarConta() {
     const [step, setStep] = useState(1);
@@ -14,10 +13,10 @@ export function AdicionarConta() {
     const [isInstallmentsEnabled, setIsInstallmentsEnabled] = useState(false);
     const [installmentsType, setInstallmentsType] = useState("fixed");
     const [amount, setAmount] = useState("");
-    const [expireDate, setExpireDate] = useState(new Date());
+    const [expireDate, setExpireDate] = useState(new Date(2025, 5, 20)); // Data fixa para testar
     const [show, setShow] = useState(false);
     
-    const { saveBill } = useStorage();
+    const store = useBillsStore();
 
     const isNextButtonEnabled = () => {
         if (step === 2 && billName.trim() === "") return false;
@@ -69,7 +68,6 @@ export function AdicionarConta() {
         let formattedAmount = amount.replace(',', '.');
         
         const bill = {
-            id: uuidv4(),
             optionBill: opPayReceive,
             billName: billName,
             amount: formattedAmount,
@@ -78,14 +76,13 @@ export function AdicionarConta() {
             installmentsType: installmentsType,
         };
         
-        await saveBill('@bill', bill);
-        alert("Conta salva com sucesso!");
+        if(store.addBills(bill)) alert("Conta salva com sucesso!");
         cleanInput();
-        step = 1;
+        setStep(1);
     };
 
     const onChangeDate = (event, selectedDate) => {
-        if (selectedDate) {
+        if (selectedDate != expireDate) {
             setExpireDate(selectedDate);
         }
         setShow(false);
@@ -152,15 +149,21 @@ export function AdicionarConta() {
                             onPress={() => setShow(true)}
                             style={[styles.opInstallments, {alignSelf:"center"}]}
                             >
-                                <Text style={[styles.opText, {width: 200, alignSelf: "center"} ]}>Abrir calendário</Text>
+                                <Text style={[styles.opText, {width: 200, alignSelf: "center"} ]}>{expireDate.toLocaleDateString('pt-BR')}</Text>
                         </TouchableOpacity>
                         {show && (
-                        <DateTimePicker
-                            value={expireDate}
-                            mode="date"
-                            display={Platform.OS === "ios" ? "spinner" : "calendar"}
-                            onChange={() => {onChangeDate}}
-                        />
+                            <DateTimePicker
+                                value={expireDate} // Mantém essa data fixa
+                                mode="date"
+                                display="calendar" 
+                                onChange={(event, selectedDate) => {
+                                    if (selectedDate) { // Garante que não seja null
+                                        setExpireDate(selectedDate);
+                                    }
+                                }}
+                                minimumDate={new Date(2010, 0, 1)} 
+                                key={expireDate.toISOString()}
+                            />
                         )}
                     </View>
                 )}

@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Home } from './pages/home'
 import { Ionicons } from "@expo/vector-icons";
-import { AdicionarConta} from "./pages/adicionarConta"
-import { contasFuturas} from "./pages/contasFuturas"
+import { AdicionarConta } from "./pages/adicionar"
+import { ContasFuturas } from "./pages/contasFuturas"
 
 const Tab = createBottomTabNavigator();
 
@@ -58,7 +58,7 @@ export function Routes() {
             </Tab.Screen>
             <Tab.Screen
                 name="contasFuturas"
-                component={contasFuturas}
+                component={ContasFuturas}
                 options={{
                     tabBarShowLabel: false,
                     headerShown: false,
