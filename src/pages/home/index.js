@@ -6,7 +6,8 @@ import { useBillsStore } from "../../store/billsStore";
 import { BillsList } from "../contas/components/billsList"
 
 export function Home() {
-    const [listBills, setListBills] = useState([]);
+    const [listBillsPay, setListBillsPay] = useState([]);
+    const [listBillsReceive, setListBillsReceive] = useState([]);
     const focused = useIsFocused();
     const store = useBillsStore();
 
@@ -16,11 +17,13 @@ export function Home() {
 
     useEffect(() => {
         store.loadBills();
-        const bills = store.bills;
+        const billsPay = store.billsPay(store.bills);
+        const billsReceive = store.billsReceive(store.bills);
+        setListBillsPay(billsPay);
+        setListBillsReceive(billsReceive);
 
-        console.log(store.billsByMonth(bills));
-        setListBills(bills);
-
+        console.log(listBillsPay)
+        console.log(listBillsReceive)
     }, [focused]);
 
     return (
@@ -33,15 +36,19 @@ export function Home() {
                 <Text style={styles.headerListText}>Nome</Text>
                 <Text style={styles.headerListText} numberOfLines={1} ellipsizeMode="tail">Vencimento</Text>
                 <Text style={styles.headerListText}>Parcelas</Text>
-                <Text style={styles.headerListText}>Valor R$</Text>
+                <Text style={styles.headerListText}>Valor</Text>
                 <Text style={styles.headerListText}>Pago</Text>
             </View>
-            <Text>Pagar</Text>
-            <BillsList list={listBills}/>
+            <View style={styles.content}>
+                <BillsList list={listBillsPay}/>
+                <Text style={styles.opTitle}>Total Pagar R$: {getTotalAmount(listBillsPay)}</Text>
+                <BillsList list={listBillsReceive}/>
+                <Text style={styles.opTitle}>Total Receber R$: {getTotalAmount(listBillsReceive)}</Text>
+            </View>
 '           <View style={styles.footer}>
                 <Text style={styles.footerText}>Total: </Text>
                 <Text style={styles.footerText}>
-                    {getTotalAmount(listBills)}
+                    {getTotalAmount(listBillsPay)}
                 </Text>
             </View>
         </SafeAreaView>
@@ -51,7 +58,7 @@ export function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "space-between",
+        gap:20,
         backgroundColor: "#0E0D0D",
         width: "100%",
     },
@@ -80,6 +87,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
         minWidth: 50
     },
+    content: {
+        flex: 1
+    },
     footer: {
         flexDirection: "row",
         padding: 20
@@ -89,6 +99,14 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         textAlign: "center",
         fontSize: 20
+    },
+    opTitle: {
+        color: "white",
+        fontFamily: 'Poppins-Regular',
+        textAlign: "right",
+        minWidth: 50,
+        fontSize: 14,
+        marginBottom: 10,
+        paddingRight: 20
     }
-
 })

@@ -27,6 +27,19 @@ export const useBillsStore = create((set) => ({
             return (billDate.getMonth() === currentMonth) && (billDate.getFullYear() === currentYear);
         });
     },
+    billsPay: (list) => {
+        return list.filter((bill) => bill.optionBill === "pay");
+    },
+    billsReceive: (list) => {
+        return list.filter((bill) => bill.optionBill === "receive");
+    },
+    checkRegister: async (id) => {
+        const bills = await getStorageBills();
+        const updatedBills = bills.map((bill) =>
+            bill.id === id ? { ...bill, isChecked: !bill.isChecked } : bill
+        );
+        await saveStorageBills(updatedBills);
+    }
 }));
 
 export const billsByMonth = () => {

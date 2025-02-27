@@ -2,6 +2,7 @@ import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import {Routes} from '../src/routes'
 import { useBillsStore } from '@/src/store/billsStore';
+import { useEffect } from 'react';
 
 export default function App() {
   const { loadBills } = useBillsStore();
@@ -9,12 +10,15 @@ export default function App() {
     'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
     'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
-
-  loadBills();
   
   if (!fontsLoaded) {
     return <AppLoading />;
   }
+
+  useEffect(() => {
+    loadBills();
+  },[]);
+
   return (
     <Routes />
   );

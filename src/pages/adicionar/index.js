@@ -13,7 +13,7 @@ export function AdicionarConta() {
     const [isInstallmentsEnabled, setIsInstallmentsEnabled] = useState(false);
     const [installmentsType, setInstallmentsType] = useState("fixed");
     const [amount, setAmount] = useState("");
-    const [expireDate, setExpireDate] = useState(new Date(2025, 5, 20)); // Data fixa para testar
+    const [expireDate, setExpireDate] = useState(new Date());
     const [show, setShow] = useState(false);
     
     const store = useBillsStore();
@@ -82,8 +82,9 @@ export function AdicionarConta() {
     };
 
     const onChangeDate = (event, selectedDate) => {
-        if (selectedDate != expireDate) {
+        if (event.type === "set" && selectedDate) {
             setExpireDate(selectedDate);
+            console.log(selectedDate);
         }
         setShow(false);
     };
@@ -153,16 +154,10 @@ export function AdicionarConta() {
                         </TouchableOpacity>
                         {show && (
                             <DateTimePicker
-                                value={expireDate} // Mantém essa data fixa
+                                value={expireDate}
                                 mode="date"
-                                display="calendar" 
-                                onChange={(event, selectedDate) => {
-                                    if (selectedDate) { // Garante que não seja null
-                                        setExpireDate(selectedDate);
-                                    }
-                                }}
-                                minimumDate={new Date(2010, 0, 1)} 
-                                key={expireDate.toISOString()}
+                                display="calendar"
+                                onChange={onChangeDate}
                             />
                         )}
                     </View>
