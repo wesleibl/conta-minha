@@ -4,15 +4,18 @@ import Checkbox from 'expo-checkbox';
 import { useBillsStore } from "../../../store/billsStore";
 
 export function BillsItem({ data }) {
-  const { billName, expireDate, installments, amount, isChecked } = data;
-  const formattedAmount = amount.toString().replace('.', ',') + (amount.toString().includes(',') ? '' : ',00');
+  const bills = useBillsStore(state => state.bills);
   const store = useBillsStore();
 
+  const bill = bills.find(bill => bill.id === data.id);
+
+  if (!bill) return null;
+
+  const { billName, expireDate, installments, amount, isChecked } = bill;
+  const formattedAmount = amount.toString().replace('.', ',') + (amount.toString().includes(',') ? '' : ',00');
+
   const handleCheck = async () => {
-    console.log('bills name', billName);
     await store.checkRegister(data.id);
-    await store.loadBills();
-    console.log("isChecked atualizado:", store.bills.find(bill => bill.id === data.id)?.isChecked);
   };
 
   return (
@@ -24,8 +27,7 @@ export function BillsItem({ data }) {
       <Checkbox
         style={styles.checkbox} 
         value={isChecked}
-        checked={isChecked}
-        onPress={handleCheck}
+        onValueChange={handleCheck}
       />
     </Pressable>
   );

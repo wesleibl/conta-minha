@@ -34,11 +34,13 @@ export const useBillsStore = create((set) => ({
         return list.filter((bill) => bill.optionBill === "receive");
     },
     checkRegister: async (id) => {
-        const bills = await getStorageBills();
-        const updatedBills = bills.map((bill) =>
-            bill.id === id ? { ...bill, isChecked: !bill.isChecked } : bill
-        );
-        await saveStorageBills(updatedBills);
+        set((state) => {
+            const updatedBills = state.bills.map((bill) =>
+                bill.id === id ? { ...bill, isChecked: !bill.isChecked } : bill
+            );
+            updateStorageBills(updatedBills);
+            return { bills: updatedBills };
+        });
     }
 }));
 
@@ -59,6 +61,14 @@ const saveStorageBills = async (bill) => {
         await AsyncStorage.setItem('@bills', JSON.stringify(currentBills));
     } catch (error) {
         console.log("Error ao salvar", error);
+    }
+};
+
+const updateStorageBills = async (updatedBills) => {
+    try {
+        await AsyncStorage.setItem('@bills', JSON.stringify(updatedBills));
+    } catch (error) {
+        console.log("Error ao atualizar", error);
     }
 };
 

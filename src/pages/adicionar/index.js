@@ -84,7 +84,6 @@ export function AdicionarConta() {
     const onChangeDate = (event, selectedDate) => {
         if (event.type === "set" && selectedDate) {
             setExpireDate(selectedDate);
-            console.log(selectedDate);
         }
         setShow(false);
     };
