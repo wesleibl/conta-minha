@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, Pressable} from "react-native";
+import { Text, StyleSheet, Pressable, Alert} from "react-native";
 import Checkbox from 'expo-checkbox';
 import { useBillsStore } from "../../../store/billsStore";
 
@@ -18,8 +18,25 @@ export function BillsItem({ data }) {
     await store.checkRegister(data.id);
   };
 
+  const confirmAction = () => {
+    Alert.alert(
+        "Confirmar exclusão da conta?",
+        `Excluir conta: ${billName}`,
+        [
+        { text: "Cancelar", onPress: () => console.log("Ação cancelada"), style: "cancel" },
+        { text: "Sim", onPress: () => handleRemoveBil() }
+        ],
+        { cancelable: false }
+    );
+  };
+
+  const handleRemoveBil = async () => {
+    console.log('aqui')
+    store.removeBills(data.id);
+  }
+
   return (
-    <Pressable style={styles.container}>
+    <Pressable style={styles.container} onLongPress={confirmAction}>
       <Text style={[styles.text, {width: 100}]}>{billName}</Text>
       <Text style={styles.text}>{new Date(expireDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</Text>
       <Text style={[styles.text, {width: 30}]}>{installments}</Text>

@@ -4,6 +4,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { useState, useEffect } from 'react'
 import { useBillsStore } from "../../store/billsStore";
 import { BillsList } from "../contas/components/billsList"
+import { Ionicons } from "@expo/vector-icons";
 
 export function Home() {
     const [listBillsPay, setListBillsPay] = useState([]);
@@ -15,22 +16,32 @@ export function Home() {
         return bills.reduce((acc, bill) => acc + parseFloat(bill.amount), 0);
     };
 
+    const getStatusIcon = async () => {
+        if (store.billsStatus.pastDueUnchecked) {
+            return <Ionicons size={36} color={'#E94F37'} name="alert-circle" />;
+        }
+
+        if (store.billsStatus.allChecked) {
+            return <Ionicons size={36} color={'#0DE794'} name="checkmark-circle" />;
+        }
+
+        return <Ionicons size={36} color={'#FFCB47'} name="time" />;
+    };
+
     useEffect(() => {
         store.loadBills();
+        store.checkBillsValidation();
         const billsPay = store.billsPay(store.bills);
         const billsReceive = store.billsReceive(store.bills);
         setListBillsPay(billsPay);
         setListBillsReceive(billsReceive);
-
-        console.log(listBillsPay)
-        console.log(listBillsReceive)
     }, [focused]);
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Minhas contas</Text>
-                <Image source={require('@/src/assets/circle-skeleton.png')} style={{width: 36, height: 36}}/>
+                {getStatusIcon()}
             </View>
             <View style={styles.headerList}>
                 <Text style={styles.headerListText}>Nome</Text>
@@ -46,9 +57,9 @@ export function Home() {
                 <Text style={styles.opTitle}>Total Receber R$: {getTotalAmount(listBillsReceive)}</Text>
             </View>
 '           <View style={styles.footer}>
-                <Text style={styles.footerText}>Total: </Text>
+                <Text style={styles.footerText}>Total </Text>
                 <Text style={styles.footerText}>
-                    {getTotalAmount(listBillsPay)}
+                    R$: {getTotalAmount(listBillsPay)}
                 </Text>
             </View>
         </SafeAreaView>
@@ -88,7 +99,8 @@ const styles = StyleSheet.create({
         minWidth: 50
     },
     content: {
-        flex: 1
+        flex: 1,
+        marginHorizontal: 2
     },
     footer: {
         flexDirection: "row",

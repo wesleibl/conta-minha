@@ -5,6 +5,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const useBillsStore = create((set) => ({
     bills: [],
+    billsStatus: {
+        allChecked: false,
+        pastDueUnchecked: false
+    },
     loadBills: async () => {
         const bills = await getStorageBills();
         set({ bills });
@@ -18,13 +22,14 @@ export const useBillsStore = create((set) => ({
         set((state) => ({ bills: state.bills.filter((bill) => bill.id !== id) }));
         await removeStorageBill(id);
     },
-    billsByMonth: (list) => {
+    billsByMonth: () => {
         const currentMonth = new Date().getMonth();
         const currentYear = new Date().getFullYear();
-    
-        return list.filter((bill) => {
+
+        const state = useBillsStore.getState();  // Aqui pegamos diretamente o estado da store
+        return state.bills.filter((bill) => {
             const billDate = new Date(bill.expireDate);
-            return (billDate.getMonth() === currentMonth) && (billDate.getFullYear() === currentYear);
+            return billDate.getMonth() === currentMonth && billDate.getFullYear() === currentYear;
         });
     },
     billsPay: (list) => {
@@ -41,7 +46,25 @@ export const useBillsStore = create((set) => ({
             updateStorageBills(updatedBills);
             return { bills: updatedBills };
         });
-    }
+
+        useBillsStore.getState().checkBillsValidation();
+    },
+    checkBillsValidation: () => {
+        const currentMonthBills = useBillsStore.getState().billsByMonth(); // Usar estado diretamente
+
+        const allChecked = currentMonthBills.every((bill) => bill.isChecked === true);
+        const pastDueUnchecked = currentMonthBills.some((bill) => {
+            const billDate = new Date(bill.expireDate);
+            return billDate < new Date() && bill.isChecked === false;
+        });
+
+        set({
+            billsStatus: {
+                allChecked,
+                pastDueUnchecked,
+            }
+        });
+    },
 }));
 
 export const billsByMonth = () => {
