@@ -1,65 +1,72 @@
-# 💰 App Conta minha
+# Conta Minha
 
-Um aplicativo simples para controle de contas mensais, desenvolvido em React Native com Expo.
+Um app React Native (Expo) para gerenciar contas mensais: criar, marcar como pagas e visualizar status.
 
-### 📌 Funcionalidades
+![Expo](https://img.shields.io/badge/Expo-53.0.0-blue) ![License](https://img.shields.io/badge/license-MIT-green)
 
-Adicionar contas com:
+## Sumário
 
-Nome
+* [Funcionalidades](#funcionalidades)
+* [Instalação](#instalação)
+* [Uso](#uso)
+* [Melhorias Futuras](#melhorias-futuras)
+* [Licença](#licença)
+* [Contato](#contato)
 
-Data de vencimento (opcional)
+## Funcionalidades
 
-Valor
+* Adicionar contas com:
 
-Tipo (parcelada ou contínua)
+  * Nome
+  * Data de vencimento (opcional)
+  * Valor
+  * Tipo (parcelada ou contínua)
+* Marcar contas como pagas
+* Armazenamento local com AsyncStorage
 
-Marcar contas como pagas
+### Ícones de status
 
-Armazenamento local com AsyncStorage
+* ✅ Todas as contas pagas
+* ⚠️ Contas vencidas e não pagas
+* ⏳ Contas pendentes
 
-### Ícone de status baseado no pagamento das contas:
+## Tecnologias Utilizadas
 
-✅ Todas as contas pagas
+* React Native
+* Expo
+* Zustand (gerenciamento de estado)
+* AsyncStorage (armazenamento local)
 
-⚠️ Contas vencidas e não pagas
+## Instalação
 
-⏳ Contas pendentes
-
-### 🛠 Tecnologias Utilizadas
-
-React Native
-
-Expo
-
-Zustand (Gerenciamento de estado)
-
-AsyncStorage (Armazenamento local)
-
-### 🚀 Como Rodar o Projeto
-
-Clone o repositório:
-
+```bash
+# Clone o repositório
 git clone git@github.com:wesleibl/conta-minha.git
 
-Acesse a pasta do projeto:
-
+# Acesse a pasta do projeto
 cd conta-minha
 
-Instale as dependências:
+# Instale as dependências
+npm install  # ou yarn install
+```
 
-npm install
-# ou
-yarn install
+## Uso
 
-Inicie o aplicativo:
-
+```bash
+# Inicie o aplicativo
 npx expo start
+```
 
-### 🔜 Melhorias Futuras
+## Melhorias Futuras
 
-Integração com backend
+* Integração com backend
+* Login com Google para sincronização dos dados
+* Dashboard com gráficos
 
-Login com Google para sincronização dos dados
+## Licença
 
-Dashboard com gráficos
+Este projeto está licenciado sob a [MIT License](LICENSE).
+
+## Contato
+
+Para dúvidas ou sugestões, entre em contato: [wesleibl@gmail.com](mailto:wesleibl@gmail.com)
