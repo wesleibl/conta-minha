@@ -2,7 +2,7 @@
 
 Um app React Native (Expo) para gerenciar contas mensais: criar, marcar como pagas e visualizar status.
 
-![Expo](https://img.shields.io/badge/Expo-53.0.0-blue) ![License](https://img.shields.io/badge/license-MIT-green)
+![Expo](https://img.shields.io/badge/Expo-53.0.0-blue) ![React Native](https://img.shields.io/badge/React_Native-0.75.0-blue?logo=react) ![License](https://img.shields.io/badge/license-MIT-green)
 
 ## Sumário
 
